@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JFrame;
 
@@ -21,13 +20,17 @@ public class Game extends Canvas implements Runnable {
 	public static final int TARGET_TICK_RATE = 60; // Fixed tick rate
 
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-
-	WritableRaster raster = image.getRaster();
 	private DataBufferInt dataBufferInt = ((DataBufferInt) image.getRaster().getDataBuffer());
 	private int[] pixels = dataBufferInt.getData();
 
 	private boolean running = false;
 	private int tickCount;
+	private long lastTime, timer;
+	private int ticks, frames;
+
+	// Time in nanoseconds per tick and per frame
+	private double nsPerTick;
+	private double nsPerFrame;
 
 	public void start() {
 		running = true;
@@ -39,14 +42,15 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void run() {
-		long lastTime = System.nanoTime();
-		double nsPerTick = 1000000000.0 / TARGET_TICK_RATE; // 60 ticks per second
-		double nsPerFrame = 1000000000.0 / TARGET_FPS; // Adjustable FPS
+		// Initialize timing values
+		lastTime = System.nanoTime();
+		timer = System.currentTimeMillis();
+		nsPerTick = 1000000000.0 / TARGET_TICK_RATE; // Nanoseconds per tick
+		nsPerFrame = 1000000000.0 / TARGET_FPS; // Nanoseconds per frame
+
+		// Initialize time tracking for ticks and frames
 		double tickDelta = 0;
 		double frameDelta = 0;
-		int frames = 0;
-		int ticks = 0;
-		long lastTimer1 = System.currentTimeMillis();
 
 		while (running) {
 			long now = System.nanoTime();
@@ -54,41 +58,43 @@ public class Game extends Canvas implements Runnable {
 			frameDelta += (now - lastTime) / nsPerFrame;
 			lastTime = now;
 
-			// Tick the game logic at the TARGET_TICK_RATE (60 ticks per second)
+			// Update ticks at a fixed rate
 			while (tickDelta >= 1) {
 				ticks++;
-				tick();
+				tick(); // Perform the game logic update
 				tickDelta--;
 			}
 
-			// Render the game at the TARGET_FPS (adjustable)
+			// Render the game at the fixed FPS rate
 			if (frameDelta >= 1) {
 				frames++;
-				render();
+				render(); // Perform the rendering update
 				frameDelta--;
 			}
 
+			// Avoid consuming too much CPU time
 			try {
-				// Sleep to limit CPU usage (for FPS cap)
-				Thread.sleep(1);
+				Thread.sleep(1); // Sleep to limit CPU usage
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			// Output ticks and FPS every second
-			if (System.currentTimeMillis() - lastTimer1 > 1000) {
-				lastTimer1 += 1000;
+			// Print ticks and frames per second every second
+			if (System.currentTimeMillis() - timer > 1000) {
+				timer += 1000;
 				System.out.println(ticks + " ticks, " + frames + " FPS");
-				frames = 0;
 				ticks = 0;
+				frames = 0;
 			}
 		}
 	}
 
+	// Game logic update
 	public void tick() {
 		tickCount++;
 	}
 
+	// Render the game
 	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
