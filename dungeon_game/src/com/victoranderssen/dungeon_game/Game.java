@@ -41,6 +41,7 @@ public class Game extends Canvas implements Runnable {
 		double unprocessed = 0;
 		double nsPerTick = 1000000000.0 / 60;
 		int frames = 0;
+		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
 
 		while (running) {
@@ -49,6 +50,7 @@ public class Game extends Canvas implements Runnable {
 			lastTime = now;
 
 			while (unprocessed >= 1) {
+				ticks++;
 				tick();
 				unprocessed--;
 			}
@@ -60,8 +62,9 @@ public class Game extends Canvas implements Runnable {
 
 			if (System.currentTimeMillis() - lastTimer1 > 1000) {
 				lastTimer1 += 1000;
-				System.out.println("FPS: " + frames);
+				System.out.println(ticks + " ticks, " + frames + " FPS");
 				frames = 0;
+				ticks = 0;
 			}
 
 		}
