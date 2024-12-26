@@ -8,7 +8,11 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+import com.victoranderssen.dungeon_game.gfx.Screen;
+import com.victoranderssen.dungeon_game.gfx.SpriteSheet;
 
 public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -34,6 +38,8 @@ public class Game extends Canvas implements Runnable {
 	private double nsPerTick;
 	private double nsPerFrame;
 
+	private Screen screen;
+
 	public void start() {
 		running = true;
 		new Thread(this).start();
@@ -41,6 +47,20 @@ public class Game extends Canvas implements Runnable {
 
 	public void stop() {
 		running = false;
+	}
+
+	private void init() {
+		try {
+			// Print the path of the resource
+			System.out.println(
+					"\n\tSpriteSheet path: " + Game.class.getResource("/SpriteSheet.png") + "\n");
+
+			screen = new Screen(WIDTH, HEIGHT,
+					new SpriteSheet(ImageIO.read(
+							getClass().getResourceAsStream("/SpriteSheet.png"))));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void run() {
@@ -53,6 +73,8 @@ public class Game extends Canvas implements Runnable {
 		// Initialize time tracking for ticks and frames
 		double tickDelta = 0;
 		double frameDelta = 0;
+
+		init();
 
 		while (running) {
 			long now = System.nanoTime();
@@ -104,10 +126,7 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 
-		// Simple pixel manipulation for rendering
-		for (int i = 0; i < pixels.length; i++) {
-			pixels[i] = i + tickCount;
-		}
+		screen.render(pixels, 0, WIDTH);
 
 		Graphics g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);

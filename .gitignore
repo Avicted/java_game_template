@@ -2,6 +2,8 @@
 *.class
 
 .metadata/
+bin/
+.vscode/
 
 # Ignore log files
 *.log
