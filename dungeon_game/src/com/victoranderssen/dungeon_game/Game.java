@@ -17,6 +17,8 @@ public class Game extends Canvas implements Runnable {
 	public static final String NAME = "Dungeon Game";
 	public static final int HEIGHT = 360;
 	public static final int WIDTH = HEIGHT * 16 / 9;
+	public static final int TARGET_FPS = 144; // Adjustable frame rate
+	public static final int TARGET_TICK_RATE = 60; // Fixed tick rate
 
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -38,43 +40,48 @@ public class Game extends Canvas implements Runnable {
 
 	public void run() {
 		long lastTime = System.nanoTime();
-		double unprocessed = 0;
-		double nsPerTick = 1000000000.0 / 60;
+		double nsPerTick = 1000000000.0 / TARGET_TICK_RATE; // 60 ticks per second
+		double nsPerFrame = 1000000000.0 / TARGET_FPS; // Adjustable FPS
+		double tickDelta = 0;
+		double frameDelta = 0;
 		int frames = 0;
 		int ticks = 0;
 		long lastTimer1 = System.currentTimeMillis();
 
 		while (running) {
 			long now = System.nanoTime();
-			unprocessed += (now - lastTime) / nsPerTick;
+			tickDelta += (now - lastTime) / nsPerTick;
+			frameDelta += (now - lastTime) / nsPerFrame;
 			lastTime = now;
-			boolean shouldRender = false;
 
-			while (unprocessed >= 1) {
+			// Tick the game logic at the TARGET_TICK_RATE (60 ticks per second)
+			while (tickDelta >= 1) {
 				ticks++;
 				tick();
-				unprocessed--;
-				shouldRender = true;
+				tickDelta--;
+			}
+
+			// Render the game at the TARGET_FPS (adjustable)
+			if (frameDelta >= 1) {
+				frames++;
+				render();
+				frameDelta--;
 			}
 
 			try {
-				Thread.sleep(2);
+				// Sleep to limit CPU usage (for FPS cap)
+				Thread.sleep(1);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			if (shouldRender) {
-				frames++;
-				render();
-			}
-
+			// Output ticks and FPS every second
 			if (System.currentTimeMillis() - lastTimer1 > 1000) {
 				lastTimer1 += 1000;
 				System.out.println(ticks + " ticks, " + frames + " FPS");
 				frames = 0;
 				ticks = 0;
 			}
-
 		}
 	}
 
@@ -89,6 +96,7 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 
+		// Simple pixel manipulation for rendering
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = i + tickCount;
 		}
