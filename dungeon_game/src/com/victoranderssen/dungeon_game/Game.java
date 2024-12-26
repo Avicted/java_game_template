@@ -40,7 +40,7 @@ public class Game extends Canvas implements Runnable {
 
 	private Screen screen;
 
-	private int[] colors = new int[512];
+	private int[] colors = new int[256];
 
 	public void start() {
 		running = true;
@@ -54,10 +54,10 @@ public class Game extends Canvas implements Runnable {
 	private void init() {
 		int pp = 0;
 
-		for (int r = 0; r < 8; r++) {
-			for (int g = 0; g < 8; g++) {
-				for (int b = 0; b < 8; b++) {
-					colors[pp++] = (r * 255 / 7) << 16 | (g * 255 / 7) << 8 | (b * 255 / 7);// (r * 255 / 3) << 16 | (g
+		for (int r = 0; r < 6; r++) {
+			for (int g = 0; g < 6; g++) {
+				for (int b = 0; b < 6; b++) {
+					colors[pp++] = (r * 255 / 5) << 16 | (g * 255 / 5) << 8 | (b * 255 / 5);// (r * 255 / 3) << 16 | (g
 																							// * 255 / 3) << 8
 					// | (b * 255 / 3);
 				}
@@ -130,7 +130,7 @@ public class Game extends Canvas implements Runnable {
 	// Game logic update
 	public void tick() {
 		tickCount++;
-		// screen.xScroll++;
+		screen.xScroll++;
 		// screen.yScroll++;
 	}
 

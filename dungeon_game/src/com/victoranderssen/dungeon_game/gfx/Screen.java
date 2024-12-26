@@ -2,6 +2,7 @@ package com.victoranderssen.dungeon_game.gfx;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Screen {
     private List<Sprite> sprites = new ArrayList<Sprite>();
@@ -30,8 +31,13 @@ public class Screen {
 
         pixels = new int[w * h];
 
+        Random random = new Random();
+
         for (int i = 0; i < MAP_WIDTH * MAP_WIDTH; i++) {
-            colors[i] = i & 511;
+            colors[i] = (colors[i] << 8) + random.nextInt(6 * 6 * 6);
+            colors[i] = (colors[i] << 8) + random.nextInt(6 * 6 * 6);
+            colors[i] = (colors[i] << 8) + random.nextInt(6 * 6 * 6);
+            colors[i] = (colors[i] << 8) + random.nextInt(6 * 6 * 6);
 
             if (i % 2 == 0) {
                 databits[i] += 1;
@@ -48,10 +54,7 @@ public class Screen {
 
             for (int xt = xScroll >> 3; xt <= (xScroll + w) >> 3; xt++) {
                 int xp = xt * 8 - xScroll;
-
                 int tileIndex = (xt & (MAP_WIDTH_MASK)) + (yt & (MAP_WIDTH_MASK)) * MAP_WIDTH;
-                int bits = databits[tileIndex] & 3;
-
                 render(xp, yp, 0, colors[tileIndex], databits[tileIndex]);
             }
         }
@@ -80,10 +83,12 @@ public class Screen {
                     xs = 7 - x;
                 }
 
-                int col = (colors >> (sheet.pixels[xs + ys * sheet.width] * 9)) & 511; // 9 is the number of bits per
-                                                                                       // pixel
-                pixels[(x + xp) + (y + yp) * w] = col;
+                int col = (colors >> (sheet.pixels[xs + ys * sheet.width] * 8)) & 255;
 
+                if (col < 255) {
+                    pixels[(x + xp) + (y + yp) * w] = col;
+
+                }
             }
         }
     }
