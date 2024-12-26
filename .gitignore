@@ -1,0 +1,44 @@
+# Ignore class files
+*.class
+
+.metadata/
+
+# Ignore log files
+*.log
+
+# Ignore package files
+*.jar
+*.war
+*.ear
+
+# Ignore IDE-specific files
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# NetBeans
+nbproject/
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
+# JUnit reports
+test-*.xml
+
+# Temporary files
+*.swp
+*~
+*.bak
+*.tmp
+
+# Java-specific files
+hs_err_pid*
