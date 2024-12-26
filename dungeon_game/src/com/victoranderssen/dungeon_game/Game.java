@@ -40,6 +40,8 @@ public class Game extends Canvas implements Runnable {
 
 	private Screen screen;
 
+	private int[] colors = new int[512];
+
 	public void start() {
 		running = true;
 		new Thread(this).start();
@@ -50,6 +52,18 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void init() {
+		int pp = 0;
+
+		for (int r = 0; r < 8; r++) {
+			for (int g = 0; g < 8; g++) {
+				for (int b = 0; b < 8; b++) {
+					colors[pp++] = (r * 255 / 7) << 16 | (g * 255 / 7) << 8 | (b * 255 / 7);// (r * 255 / 3) << 16 | (g
+																							// * 255 / 3) << 8
+					// | (b * 255 / 3);
+				}
+			}
+		}
+
 		try {
 			// Print the path of the resource
 			System.out.println(
@@ -128,7 +142,12 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 
-		screen.render(pixels, 0, WIDTH);
+		screen.render();
+		for (int y = 0; y < screen.h; y++) {
+			for (int x = 0; x < screen.w; x++) {
+				pixels[x + y * WIDTH] = colors[screen.pixels[x + y * screen.w]];
+			}
+		}
 
 		Graphics g = bs.getDrawGraphics();
 
