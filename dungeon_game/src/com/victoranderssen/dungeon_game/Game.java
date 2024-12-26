@@ -18,7 +18,7 @@ public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String NAME = "Dungeon Game";
-	public static final int SCALE = 2;
+	public static final int SCALE = 3;
 	public static final int HEIGHT = 360;
 	public static final int WIDTH = HEIGHT * 16 / 9;
 
@@ -116,6 +116,8 @@ public class Game extends Canvas implements Runnable {
 	// Game logic update
 	public void tick() {
 		tickCount++;
+		// screen.xScroll++;
+		// screen.yScroll++;
 	}
 
 	// Render the game
@@ -129,7 +131,12 @@ public class Game extends Canvas implements Runnable {
 		screen.render(pixels, 0, WIDTH);
 
 		Graphics g = bs.getDrawGraphics();
-		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+
+		int ww = WIDTH * SCALE;
+		int hh = HEIGHT * SCALE;
+		int xo = (getWidth() - ww) / 2;
+		int yo = (getHeight() - hh) / 2;
+		g.drawImage(image, xo, yo, ww, hh, null);
 		g.dispose();
 		bs.show();
 	}
@@ -143,7 +150,7 @@ public class Game extends Canvas implements Runnable {
 		JFrame frame = new JFrame(Game.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
-		frame.add(game);
+		frame.add(game, BorderLayout.CENTER);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);

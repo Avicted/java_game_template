@@ -9,11 +9,14 @@ public class Screen {
     private static final int MAP_WIDTH = 64; // Must be a power of 2
     private static final int MAP_WIDTH_MASK = MAP_WIDTH - 1;
 
-    private int[] tiles = new int[MAP_WIDTH * MAP_WIDTH * 2];
-    private int[] colors = new int[MAP_WIDTH * MAP_WIDTH * 3];
-    private int[] databits = new int[MAP_WIDTH * MAP_WIDTH];
-    private int xScroll;
-    private int yScroll;
+    public int[] tiles = new int[MAP_WIDTH * MAP_WIDTH * 2];
+    public int[] colors = new int[MAP_WIDTH * MAP_WIDTH * 4];
+    public int[] databits = new int[MAP_WIDTH * MAP_WIDTH];
+    public int xScroll;
+    public int yScroll;
+
+    public static final int BIT_MIRROR_X = 0x01;
+    public static final int BIT_MIRROR_Y = 0x02;
 
     public final int w, h;
 
@@ -23,32 +26,63 @@ public class Screen {
         this.sheet = sheet;
         this.w = w;
         this.h = h;
+
+        for (int i = 0; i < MAP_WIDTH * MAP_WIDTH; i++) {
+            colors[i * 4 + 0] = 0xff00ff;
+            colors[i * 4 + 1] = 0x00ffff;
+            colors[i * 4 + 2] = 0xffff00;
+            colors[i * 4 + 3] = 0xffffff;
+
+            if (i % 2 == 0) {
+                databits[i] += 1;
+            }
+            if (i / MAP_WIDTH % 2 == 0) {
+                databits[i] += 2;
+            }
+        }
     }
 
     public void render(int[] pixels, int offs, int row) {
-        for (int yt = xScroll << 3; yt <= (xScroll + 8) >> 3; yt++) {
-            int y0 = yt + yScroll;
-            int y1 = y0 + 8;
-            if (y0 < 0)
-                y0 = 0;
-            if (y1 > h)
-                y1 = h;
+        for (int yt = yScroll >> 3; yt <= (yScroll + h) >> 3; yt++) {
+            int yp = yt * 8 - yScroll;
 
-            for (int xt = yScroll << 3; xt <= (yScroll + 8) >> 3; xt++) {
-                int x0 = xt - xScroll;
-                int x1 = x0 + 8;
-                if (x0 < 0)
-                    x0 = 0;
-                if (x1 > h)
-                    x1 = h;
+            for (int xt = xScroll >> 3; xt <= (xScroll + w) >> 3; xt++) {
+                int xp = xt * 8 - xScroll;
 
                 int tileIndex = (xt & (MAP_WIDTH_MASK)) + (yt & (MAP_WIDTH_MASK)) * MAP_WIDTH;
+                int bits = databits[tileIndex] & 3;
 
-                for (int y = 0; y < y1; y++) {
-                    int sourcePointer = ((y - yScroll) & 7) * sheet.width + ((x0 - xScroll) & 7);
-                    int targetPointer = offs + x0 + y * row;
-                    for (int x = x0; x < x1; x++) {
-                        pixels[targetPointer++] = colors[tileIndex * 4 + sheet.pixels[sourcePointer++]];
+                boolean mirrorX = (bits & BIT_MIRROR_X) > 0;
+                boolean mirrorY = (bits & BIT_MIRROR_Y) > 0;
+
+                for (int y = 0; y < 8; y++) {
+                    int ys = y;
+                    if (mirrorY) {
+                        ys = 7 - y;
+                    }
+                    if (y + yp < 0) {
+                        continue;
+                    }
+                    if (y + yp >= h) {
+                        continue;
+                    }
+
+                    for (int x = 0; x < 8; x++) {
+                        if (x + xp < 0) {
+                            continue;
+                        }
+                        if (x + xp >= w) {
+                            continue;
+                        }
+
+                        int xs = x;
+                        if (mirrorX) {
+                            xs = 7 - x;
+                        }
+
+                        int col = tileIndex * 4 + sheet.pixels[xs + ys * sheet.width];
+                        pixels[(x + xp) + (y + yp) * row + offs] = colors[col];
+
                     }
                 }
             }
