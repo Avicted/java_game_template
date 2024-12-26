@@ -14,8 +14,10 @@ public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String NAME = "Dungeon Game";
+	public static final int SCALE = 2;
 	public static final int HEIGHT = 360;
 	public static final int WIDTH = HEIGHT * 16 / 9;
+
 	public static final int TARGET_FPS = 144; // Adjustable frame rate
 	public static final int TARGET_TICK_RATE = 60; // Fixed tick rate
 
@@ -115,9 +117,9 @@ public class Game extends Canvas implements Runnable {
 
 	public static void main(String[] args) {
 		Game game = new Game();
-		game.setMinimumSize(new Dimension(WIDTH * 2, HEIGHT * 2));
-		game.setMaximumSize(new Dimension(WIDTH * 2, HEIGHT * 2));
-		game.setPreferredSize(new Dimension(WIDTH * 2, HEIGHT * 2));
+		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
 		JFrame frame = new JFrame(Game.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
