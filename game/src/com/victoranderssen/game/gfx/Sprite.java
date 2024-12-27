@@ -1,4 +1,4 @@
-package com.victoranderssen.dungeon_game.gfx;
+package com.victoranderssen.game.gfx;
 
 public class Sprite {
     public int x, y;

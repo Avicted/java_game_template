@@ -4,6 +4,6 @@
 /**
  * 
  */
-module dungeon_game {
+module game {
 	requires java.desktop;
 }

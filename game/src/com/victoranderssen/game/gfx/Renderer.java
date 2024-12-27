@@ -1,4 +1,4 @@
-package com.victoranderssen.dungeon_game.gfx;
+package com.victoranderssen.game.gfx;
 
 import java.util.ArrayList;
 import java.util.List;

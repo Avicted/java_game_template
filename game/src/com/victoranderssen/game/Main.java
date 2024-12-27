@@ -1,4 +1,4 @@
-package com.victoranderssen.dungeon_game;
+package com.victoranderssen.game;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -11,10 +11,10 @@ import java.awt.image.DataBufferInt;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import com.victoranderssen.dungeon_game.gfx.Renderer;
-import com.victoranderssen.dungeon_game.gfx.SpriteSheet;
+import com.victoranderssen.game.gfx.Renderer;
+import com.victoranderssen.game.gfx.SpriteSheet;
 
-public class Game extends Canvas implements Runnable {
+public class Main extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String NAME = "Dungeon Game";
@@ -65,7 +65,7 @@ public class Game extends Canvas implements Runnable {
 		try {
 			// Print the path of the resource
 			System.out.println(
-					"\n\tSpriteSheet path: " + Game.class.getResource("/SpriteSheet.png") + "\n");
+					"\n\tSpriteSheet path: " + getClass().getResource("/SpriteSheet.png") + "\n");
 
 			renderer = new Renderer(WIDTH, HEIGHT,
 					new SpriteSheet(ImageIO.read(getClass().getResourceAsStream("/SpriteSheet.png"))));
@@ -158,12 +158,12 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		Game game = new Game();
+		Main game = new Main();
 		game.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		game.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		game.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
-		JFrame frame = new JFrame(Game.NAME);
+		JFrame frame = new JFrame(Main.NAME);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(game, BorderLayout.CENTER);

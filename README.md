@@ -5,7 +5,7 @@ Inspiration taken from Markus "Notch" Persson's Ludum Dare 12 entry, "Minicraft"
 
 Run without IDE:
 ```bash
-cd dungeon_game
+cd game
 
 chmod +x run.sh
 
@@ -13,4 +13,4 @@ chmod +x run.sh
 ```
 
 # Screenshot
-![Screenshot](dungeon_game/resources/Screenshot.png)
+![Screenshot](game/resources/Screenshot.png)

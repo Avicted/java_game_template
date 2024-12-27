@@ -5,7 +5,7 @@ PROJECT_DIR="$(pwd)"
 BIN_DIR="$PROJECT_DIR/bin"
 RES_DIR="$PROJECT_DIR/res"
 SRC_DIR="$PROJECT_DIR/src"
-JAR_NAME="dungeon_game.jar"
+JAR_NAME="game.jar"
 
 # Set Java options (if needed)
 JAVA_OPTS="-Xmx1G -Xms512M"
@@ -21,4 +21,4 @@ javac -d "$BIN_DIR" -sourcepath "$SRC_DIR" -cp "$RES_DIR" $(find "$SRC_DIR" -nam
 
 # Run the application
 echo "Running the application..."
-java $JAVA_OPTS -cp "$BIN_DIR:$RES_DIR" com.victoranderssen.dungeon_game.Game
+java $JAVA_OPTS -cp "$BIN_DIR:$RES_DIR" com.victoranderssen.game.Game
