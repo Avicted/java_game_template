@@ -9,7 +9,7 @@ cd game
 
 chmod +x run.sh
 
-./run.sh
+./run.sh or run.bat
 ```
 
 # Screenshot
