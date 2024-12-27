@@ -11,3 +11,6 @@ chmod +x run.sh
 
 ./run.sh
 ```
+
+# Screenshot
+![Screenshot](dungeon_game/resources/Screenshot.png)

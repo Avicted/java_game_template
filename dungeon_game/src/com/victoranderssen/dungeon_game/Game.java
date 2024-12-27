@@ -11,7 +11,7 @@ import java.awt.image.DataBufferInt;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import com.victoranderssen.dungeon_game.gfx.Screen;
+import com.victoranderssen.dungeon_game.gfx.Renderer;
 import com.victoranderssen.dungeon_game.gfx.SpriteSheet;
 
 public class Game extends Canvas implements Runnable {
@@ -22,7 +22,7 @@ public class Game extends Canvas implements Runnable {
 	public static final int HEIGHT = 360;
 	public static final int WIDTH = HEIGHT * 16 / 9;
 
-	public static final int TARGET_FPS = 144; // Adjustable frame rate
+	public static final int TARGET_FPS = 1000; // Adjustable frame rate
 	public static final int TARGET_TICK_RATE = 60; // Fixed tick rate
 
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -38,9 +38,9 @@ public class Game extends Canvas implements Runnable {
 	private double nsPerTick;
 	private double nsPerFrame;
 
-	private Screen screen;
+	private Renderer renderer;
 
-	private int[] colors = new int[256];
+	private int[] colors = new int[512];
 
 	public void start() {
 		running = true;
@@ -54,23 +54,10 @@ public class Game extends Canvas implements Runnable {
 	private void init() {
 		int pp = 0;
 
-		// Loop through all combinations of red (r), green (g), and blue (b) values
-		// Each of r, g, b will range from 0 to 5, creating a palette with 6 levels per
-		// color
-		for (int r = 0; r < 6; r++) {
-			for (int g = 0; g < 6; g++) {
-				for (int b = 0; b < 6; b++) {
-					// Generate a color by combining the RGB values and store it in the 'colors'
-					// array
-					// The color intensity is scaled from 0 to 255, divided by 5 (since there are 6
-					// levels)
-					// The final color is composed of:
-					// - Red: (r * 255 / 5) shifted 16 bits (into the red channel)
-					// - Green: (g * 255 / 5) shifted 8 bits (into the green channel)
-					// - Blue: (b * 255 / 5) directly in the blue channel
-					// This will create a total of 6 * 6 * 6 = 216 distinct colors in the 'colors'
-					// array
-					colors[pp++] = (r * 255 / 5) << 16 | (g * 255 / 5) << 8 | (b * 255 / 5);
+		for (int r = 0; r < 8; r++) {
+			for (int g = 0; g < 8; g++) {
+				for (int b = 0; b < 8; b++) {
+					colors[pp++] = (r * 255 / 7) << 16 | (g * 255 / 7) << 8 | (b * 255 / 7);
 				}
 			}
 		}
@@ -80,9 +67,8 @@ public class Game extends Canvas implements Runnable {
 			System.out.println(
 					"\n\tSpriteSheet path: " + Game.class.getResource("/SpriteSheet.png") + "\n");
 
-			screen = new Screen(WIDTH, HEIGHT,
-					new SpriteSheet(ImageIO.read(
-							getClass().getResourceAsStream("/SpriteSheet.png"))));
+			renderer = new Renderer(WIDTH, HEIGHT,
+					new SpriteSheet(ImageIO.read(getClass().getResourceAsStream("/SpriteSheet.png"))));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -141,8 +127,8 @@ public class Game extends Canvas implements Runnable {
 	// Game logic update
 	public void tick() {
 		tickCount++;
-		screen.xScroll++;
-		// screen.yScroll++;
+		renderer.xScroll++;
+		renderer.yScroll++;
 	}
 
 	// Render the game
@@ -153,10 +139,10 @@ public class Game extends Canvas implements Runnable {
 			return;
 		}
 
-		screen.render();
-		for (int y = 0; y < screen.h; y++) {
-			for (int x = 0; x < screen.w; x++) {
-				pixels[x + y * WIDTH] = colors[screen.pixels[x + y * screen.w]];
+		renderer.render();
+		for (int y = 0; y < renderer.h; y++) {
+			for (int x = 0; x < renderer.w; x++) {
+				pixels[x + y * WIDTH] = colors[renderer.pixels[x + y * renderer.w]];
 			}
 		}
 
