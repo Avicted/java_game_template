@@ -54,12 +54,23 @@ public class Game extends Canvas implements Runnable {
 	private void init() {
 		int pp = 0;
 
+		// Loop through all combinations of red (r), green (g), and blue (b) values
+		// Each of r, g, b will range from 0 to 5, creating a palette with 6 levels per
+		// color
 		for (int r = 0; r < 6; r++) {
 			for (int g = 0; g < 6; g++) {
 				for (int b = 0; b < 6; b++) {
-					colors[pp++] = (r * 255 / 5) << 16 | (g * 255 / 5) << 8 | (b * 255 / 5);// (r * 255 / 3) << 16 | (g
-																							// * 255 / 3) << 8
-					// | (b * 255 / 3);
+					// Generate a color by combining the RGB values and store it in the 'colors'
+					// array
+					// The color intensity is scaled from 0 to 255, divided by 5 (since there are 6
+					// levels)
+					// The final color is composed of:
+					// - Red: (r * 255 / 5) shifted 16 bits (into the red channel)
+					// - Green: (g * 255 / 5) shifted 8 bits (into the green channel)
+					// - Blue: (b * 255 / 5) directly in the blue channel
+					// This will create a total of 6 * 6 * 6 = 216 distinct colors in the 'colors'
+					// array
+					colors[pp++] = (r * 255 / 5) << 16 | (g * 255 / 5) << 8 | (b * 255 / 5);
 				}
 			}
 		}
